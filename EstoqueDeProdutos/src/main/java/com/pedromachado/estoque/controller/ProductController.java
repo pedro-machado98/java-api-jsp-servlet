@@ -62,4 +62,67 @@ public class ProductController extends HttpServlet {
         pw.print(gson.toJson(productDAO.saveProduct(prod)));  //response is a object of type product
         pw.flush();
     }
+
+    @Override
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.setContentType("application/json");
+        resp.setCharacterEncoding("utf-8");
+        req.setCharacterEncoding("utf-8");
+        resp.setStatus(200);
+
+        StringBuffer sb = new StringBuffer();
+
+        BufferedReader br = req.getReader();
+        String attributes = null;
+
+        while ((attributes = br.readLine()) != null) {
+            sb.append(attributes);
+        }
+        Product prod = gson.fromJson(sb.toString(), Product.class);
+        Product prodResp = productDAO.updateProduct(prod);
+
+        PrintWriter pw = resp.getWriter();
+
+        if (prodResp == null) {
+            resp.setStatus(404);
+            pw.print("Product was not found.");
+            pw.flush();
+        } else{
+            pw.print(gson.toJson(prodResp));  //response is a object of type product
+            pw.flush();
+        }
+
+    }
+
+    @Override
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        resp.setContentType("application/json");
+        resp.setCharacterEncoding("utf-8");
+        req.setCharacterEncoding("utf-8");
+        resp.setStatus(200);
+
+        StringBuffer sb = new StringBuffer();
+
+        BufferedReader br = req.getReader();
+        String attributes = null;
+
+        while ((attributes = br.readLine()) != null) {
+            sb.append(attributes);
+        }
+        Product prod = gson.fromJson(sb.toString(), Product.class);
+        String prodResp = productDAO.deleteProduct(prod.getId());
+
+        PrintWriter pw = resp.getWriter();
+
+        if (prodResp == null) {
+            resp.setStatus(404);
+            pw.print("Product was not found.");
+            pw.flush();
+        } else{
+            pw.print(gson.toJson(prodResp));
+            pw.flush();
+        }
+
+    }
 }
